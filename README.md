@@ -1,0 +1,4 @@
+imageFader
+==========
+
+Jquery plugin - imageFader
