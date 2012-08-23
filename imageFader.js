@@ -18,6 +18,18 @@
 
       init : function(options){
           initImageFader(this,options);
+      },
+      pause : function(){
+          pauseAnimation(this);
+      },
+      play : function(){
+          playAnimations(this);
+      },
+      next : function(){
+          nextImg(this);
+      },
+      prev : function(){
+          prevImg(this);
       }
 
   };
@@ -26,13 +38,65 @@
 
       //Default Options
       settings = $.extend({
-          "startPosition" : 3,
+          "startPosition" : 0,
           "autoPlay" : true,
-          "animationSpeed" : 500
+          "animationSpeed" : 500,
+          "animationDelay" : 4000,
+          "animationStart" : function(eventObj){},
+          "animationEnd" : function(eventObjt){}
+
       },options);
 
       checkImgLoad(fader,options);
 
+  };
+
+  var pauseAnimation = function(){
+      settings.autoPlay = false;
+  };
+
+  var playAnimations = function(fader){
+      settings.autoPlay = true;
+      startSlideShow(fader);
+  };
+
+  var nextImg = function(fader){
+      settings.autoPlay = false;
+      startSlideShow(fader);
+  };
+
+  var prevImg = function(fader){
+      settings.autoPlay = false;
+      fader.children("li").each(function(){
+          if($(this).hasClass("visibleImg")){
+              if($(this).index() === 0){
+                  if(fader.children("li").last().children("img").width > 0 && fader.children("li").last().children("img").is(":visible")){
+                      fadeFunction(fader.children("li").last(),$(this),fader);
+                  }
+                  else if(fader.children("li").last().children("img").is(":visible") === false){
+                      fadeFunction(fader.children("li").last(),$(this),fader);
+                  }
+                  else{
+                      fader.children("li").last().children("img").load(function(){
+                          fadeFunction(fader.children("li").last(),$(this),fader);
+                      });
+                  }
+              }
+              else{
+                  if($(this).prev().children("img").width > 0 && $(this).prev().children("img").is(":visible")){
+                      fadeFunction($(this).prev(),$(this),fader);
+                  }
+                  else if($(this).prev().children("img").is(":visible") === false){
+                      fadeFunction($(this).prev(),$(this),fader);
+                  }
+                  else{
+                      $(this).prev().children("img").load(function(){
+                          fadeFunction($(this).prev(),$(this),fader);
+                      });
+                  }
+              }
+          }
+      });
   };
 
   var checkImgLoad = function(fader,options){
@@ -52,7 +116,11 @@
               else{
                   $(this).parent().removeClass("hiddenImg");
                   $(this).parent().addClass("visibleImg");
-                  startSlideShow(fader,options);
+                  if(settings.autoPlay === true){
+                      setTimeout(function() {
+                          startSlideShow(fader,options);
+                      }, settings.animationDelay);
+                  }
               }
           }
           else{
@@ -64,7 +132,11 @@
                   else{
                       $(this).parent().removeClass("hiddenImg");
                       $(this).parent().addClass("visibleImg");
-                      startSlideShow(fader,options);
+                      setTimeout(function() {
+                          if(settings.autoPlay === true){
+                              startSlideShow(fader,options);
+                          }
+                      }, settings.animationDelay);
                   }
               });
           }
@@ -76,9 +148,55 @@
       fader.children("li").each(function(){
           if($(this).hasClass("visibleImg")){
               if($(this).index() === fader.children("li").length - 1){
+                  if(fader.children("li").first().children("img").width > 0 && fader.children("li").first().children("img").is(":visible")){
+                      fadeFunction(fader.children("li").first(),$(this),fader,options);
+                  }
+                  else if(fader.children("li").first().children("img").is(":visible") === false){
+                      fadeFunction(fader.children("li").first(),$(this),fader,options);
+                  }
+                  else{
+                      fader.children("li").first().children("img").load(function(){
+                          fadeFunction(fader.children("li").first(),$(this),fader,options);
+                      });
+                  }
+              }
+              else{
+                  if($(this).next().children("img").width > 0 && $(this).next().children("img").is(":visible")){
+                      fadeFunction($(this).next(),$(this),fader,options);
+                  }
+                  else if($(this).next().children("img").is(":visible") === false){
+                      fadeFunction($(this).next(),$(this),fader,options);
+                  }
+                  else{
+                      $(this).next().children("img").load(function(){
+                          fadeFunction($(this).next(),$(this),fader,options);
+                      });
+                  }
               }
           }
       });
+  };
+
+  var fadeFunction = function(fIn,fOut,fader,options){
+      var eventObj = {"index" : fOut.index()};
+      settings.animationStart(eventObj);
+      fIn.fadeIn(settings.animationSpeed);
+      fOut.fadeOut(settings.animationSpeed);
+      setTimeout(function() {
+          eventObj = {"index" : fIn.index()};
+          settings.animationEnd(eventObj);
+          fIn.addClass("visibleImg");
+          fIn.removeClass("hiddenImg");
+          fOut.removeClass("visibleImg");
+          fOut.addClass("hiddenImg");
+
+          setTimeout(function() {
+              if(settings.autoPlay === true){
+                  startSlideShow(fader,options);
+              }
+          }, settings.animationDelay);
+
+      }, settings.animationSpeed);
   };
 
 })( jQuery );
