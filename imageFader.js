@@ -30,6 +30,9 @@
       },
       prev : function(){
           prevImg(this);
+      },
+      goTo : function(pos){
+          goToPos(this,pos);
       }
 
   };
@@ -85,12 +88,12 @@
   };
 
   var nextImg = function(fader){
-      settings.autoPlay = false;
+      pauseAnimation();
       startSlideShow(fader);
   };
 
   var prevImg = function(fader){
-      settings.autoPlay = false;
+      pauseAnimation();
       fader.children("li").each(function(){
           if($(this).hasClass("visibleImg")){
               if($(this).index() === 0){
@@ -123,12 +126,43 @@
       });
   };
 
+  var goToPos = function(fader,pos){
+      if (pos > fader.children("li").length - 1) {
+          console.log("Error: No image at position " + pos);
+      }
+      else{
+          pauseAnimation();
+          fader.children("li").each(function(){
+              if($(this).hasClass("visibleImg")){
+                  if(fader.children("li").eq(pos).children("img").width > 0 && fader.children("li").eq(pos).children("img").is(":visible")){
+                      fadeFunction(fader.children("li").eq(pos),$(this),fader);
+                  }
+                  else if(fader.children("li").eq(pos).children("img").is(":visible") === false){
+                      fadeFunction(fader.children("li").eq(pos),$(this),fader);
+                  }
+                  else{
+                      fader.children("li").eq(pos).children("img").load(function(){
+                          fadeFunction(fader.children("li").eq(pos),$(this),fader);
+                      });
+                  }
+              }
+          });
+      }
+  };
+
   var checkImgLoad = function(fader,options){
       var imageTags = fader.children("li").children("img");
 
       imageTags.css("max-width",fader.width()).css("max-height",fader.height());
       fader.children("li").css("position","absolute").css("padding","0").css("margin","0").css("width","100%").css("height","100%");
       fader.css("list-style-type","none").css("padding","0").css("margin","0");
+
+      if (settings.captions === true){
+          fader.children("li").each(function(i){
+              var caption = $(this).children("img").first().attr(settings.captionAttr);
+              $(this).append("<div id='imgCaption"+i+"' class='imageFaderCaption'>"+caption+"</div>");
+          });
+      }
 
       imageTags.each(function(){
           $(this).parent().addClass("hiddenImg");
