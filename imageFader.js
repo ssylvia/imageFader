@@ -49,6 +49,28 @@
 
       checkImgLoad(fader,options);
 
+      $(window).resize(function(){
+          var imageTags = fader.children("li").children("img");
+          imageTags.css("max-width",fader.width()).css("max-height",fader.height());
+
+          imageTags.each(function(){
+              if($(this).width() > 0 && $(this).parent().is(":visible")){
+                  $(this).css("margin-left",(fader.width() - $(this).width())/2).css("margin-top",(fader.height() - $(this).height())/2);
+              }
+              else if($(this).parent().is(":visible") === false){
+                  $(this).parent().show();
+                  $(this).css("margin-left",(fader.width() - $(this).width())/2).css("margin-top",(fader.height() - $(this).height())/2);
+                  $(this).parent().hide();
+
+              }
+              else{
+                  $(this).load(function(){
+                      $(this).css("margin-left",(fader.width() - $(this).width())/2).css("margin-top",(fader.height() - $(this).height())/2);
+                  });
+              }
+          });
+      });
+
   };
 
   var pauseAnimation = function(){

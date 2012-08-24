@@ -9,19 +9,16 @@
 
         <script type="text/javascript">
         $(document).ready(function(){
-            $("#fader").imageFader({
-                animationEnd:function(obj){
-                    console.log(obj.index);
-                }
-            });
+            $("#fader").imageFader();
         });
         </script>
 
         <style type="text/css">
             #fader{
+                position:absolute;
                 background-color:#000;
-                height:500px;
-                width:700px;
+                height:60%;
+                width:60%;
             }
         </style>
 
