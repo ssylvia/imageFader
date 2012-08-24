@@ -33,6 +33,9 @@
       },
       goTo : function(pos){
           goToPos(this,pos);
+      },
+      update : function(){
+          updateImageFader(this);
       }
 
   };
@@ -147,6 +150,21 @@
                   }
               }
           });
+      }
+  };
+
+  var updateImageFader = function(fader){
+      $(".imageFaderCaption").remove();
+      fader.children("li").removeClass("hiddenImg").removeClass("visibleImg").show();
+      if(settings.autoPlay === true){
+          pauseAnimation(fader);
+          checkImgLoad(fader);
+          setTimeout(function() {
+              playAnimations(fader);
+          }, settings.animationDelay);
+      }
+      else{
+          checkImgLoad(fader);
       }
   };
 
