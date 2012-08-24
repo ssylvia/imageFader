@@ -9,7 +9,10 @@
 
         <script type="text/javascript">
         $(document).ready(function(){
-            $("#fader").imageFader();
+            $("#fader").imageFader({
+                captions : true,
+                captionAttr : "caption"
+            });
         });
         </script>
 
@@ -17,8 +20,8 @@
             #fader{
                 position:absolute;
                 background-color:#000;
-                height:60%;
-                width:60%;
+                height:50%;
+                width:50%;
             }
         </style>
 
@@ -26,10 +29,10 @@
     <body>
 
         <ul id='fader'>
-            <li><img src="http://farm5.staticflickr.com/4149/4975374268_15df612823_b.jpg" alt=""></li>
-            <li><img src="http://farm5.staticflickr.com/4085/4974756721_8a24cc8350_b.jpg" alt=""></li>
-            <li><img src="http://farm5.staticflickr.com/4106/4974759279_e1b475a926_b.jpg" alt=""></li>
-            <li><img src="http://farm5.staticflickr.com/4107/4974791109_57a51cbeb4_b.jpg" alt=""></li>
+            <li><img src="http://farm5.staticflickr.com/4149/4975374268_15df612823_b.jpg" caption="Caption 1" alt=""></li>
+            <li><img src="http://farm5.staticflickr.com/4085/4974756721_8a24cc8350_b.jpg" caption="Caption 2" alt=""></li>
+            <li><img src="http://farm5.staticflickr.com/4106/4974759279_e1b475a926_b.jpg" caption="Caption 3" alt=""></li>
+            <li><img src="http://farm5.staticflickr.com/4107/4974791109_57a51cbeb4_b.jpg" caption="Caption 4" alt=""></li>
         </ul>
 
     </body>

@@ -42,6 +42,8 @@
           "autoPlay" : true,
           "animationSpeed" : 500,
           "animationDelay" : 4000,
+          "captions" : false,
+          "captionAttr" : "title",
           "animationStart" : function(eventObj){},
           "animationEnd" : function(eventObjt){}
 
@@ -125,7 +127,7 @@
       var imageTags = fader.children("li").children("img");
 
       imageTags.css("max-width",fader.width()).css("max-height",fader.height());
-      fader.children("li").css("position","absolute");
+      fader.children("li").css("position","absolute").css("padding","0").css("margin","0").css("width","100%").css("height","100%");
       fader.css("list-style-type","none").css("padding","0").css("margin","0");
 
       imageTags.each(function(){
