@@ -12,7 +12,8 @@
 
   };
 
-  var settings;
+  var settings,
+      animationReady = true;
 
   var methods = {
 
@@ -81,13 +82,15 @@
 
   };
 
-  var pauseAnimation = function(){
+  var pauseAnimation = function(fader){
       settings.autoPlay = false;
+      fader.children("li").removeClass("playingAnimation");
   };
 
   var playAnimations = function(fader){
       settings.autoPlay = true;
       startSlideShow(fader);
+      fader.children("li").addClass("playingAnimation");
   };
 
   var nextImg = function(fader){
@@ -166,6 +169,7 @@
       else{
           checkImgLoad(fader);
       }
+      animationReady = true;
   };
 
   var checkImgLoad = function(fader,options){
@@ -222,6 +226,9 @@
 
   var startSlideShow = function(fader,options){
       fader.children("li").each(function(){
+          if(settings.autoPlay === true){
+              $(this).addClass("playingAnimation");
+          }
           if($(this).hasClass("visibleImg")){
               if($(this).index() === fader.children("li").length - 1){
                   if(fader.children("li").first().children("img").width > 0 && fader.children("li").first().children("img").is(":visible")){
@@ -254,25 +261,29 @@
   };
 
   var fadeFunction = function(fIn,fOut,fader,options){
-      var eventObj = {"index" : fOut.index()};
-      settings.animationStart(eventObj);
-      fIn.fadeIn(settings.animationSpeed);
-      fOut.fadeOut(settings.animationSpeed);
-      setTimeout(function() {
-          eventObj = {"index" : fIn.index()};
-          settings.animationEnd(eventObj);
-          fIn.addClass("visibleImg");
-          fIn.removeClass("hiddenImg");
-          fOut.removeClass("visibleImg");
-          fOut.addClass("hiddenImg");
-
+      if(animationReady === true){
+          animationReady = false;
+          var eventObj = {"index" : fOut.index()};
+          settings.animationStart(eventObj);
+          fIn.fadeIn(settings.animationSpeed);
+          fOut.fadeOut(settings.animationSpeed);
           setTimeout(function() {
-              if(settings.autoPlay === true){
-                  startSlideShow(fader,options);
-              }
-          }, settings.animationDelay);
+              eventObj = {"index" : fIn.index()};
+              settings.animationEnd(eventObj);
+              fIn.addClass("visibleImg");
+              fIn.removeClass("hiddenImg");
+              fOut.removeClass("visibleImg");
+              fOut.addClass("hiddenImg");
 
-      }, settings.animationSpeed);
+              setTimeout(function() {
+                  animationReady = true;
+                  if(settings.autoPlay === true){
+                      startSlideShow(fader,options);
+                  }
+              }, settings.animationDelay);
+
+          }, settings.animationSpeed);
+      }
   };
 
 })( jQuery );
