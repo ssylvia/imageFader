@@ -94,12 +94,15 @@
   };
 
   var nextImg = function(fader){
-      pauseAnimation();
+      pauseAnimation(fader);
       startSlideShow(fader);
+      setTimeout(function() {
+          animationReady = true;
+      }, settings.animationSpeed);
   };
 
   var prevImg = function(fader){
-      pauseAnimation();
+      pauseAnimation(fader);
       fader.children("li").each(function(){
           if($(this).hasClass("visibleImg")){
               if($(this).index() === 0){
@@ -130,14 +133,17 @@
               }
           }
       });
-  };
+      setTimeout(function() {
+          animationReady = true;
+      }, settings.animationSpeed);
+};
 
   var goToPos = function(fader,pos){
       if (pos > fader.children("li").length - 1) {
           console.log("Error: No image at position " + pos);
       }
       else{
-          pauseAnimation();
+          pauseAnimation(fader);
           fader.children("li").each(function(){
               if($(this).hasClass("visibleImg")){
                   if(fader.children("li").eq(pos).children("img").width > 0 && fader.children("li").eq(pos).children("img").is(":visible")){
@@ -153,6 +159,9 @@
                   }
               }
           });
+          setTimeout(function() {
+              animationReady = true;
+          }, settings.animationSpeed);
       }
   };
 
@@ -161,9 +170,13 @@
       fader.children("li").removeClass("hiddenImg").removeClass("visibleImg").show();
       if(settings.autoPlay === true){
           pauseAnimation(fader);
+          fader.children("li").addClass("playingAnimation");
           checkImgLoad(fader);
           setTimeout(function() {
-              playAnimations(fader);
+              if(fader.children("li").first().hasClass("playingAnimation")){
+                  settings.autoPlay = true;
+                  startSlideShow(fader);
+              }
           }, settings.animationDelay);
       }
       else{
