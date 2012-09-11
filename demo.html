@@ -9,7 +9,10 @@
 
         <script type="text/javascript">
         $(document).ready(function(){
-            $(".fader").imageFader();
+            $(".fader").imageFader({
+                captions:true,
+                captionAttr:"caption"
+            });
         });
         </script>
 
@@ -19,6 +22,14 @@
                 background-color:#000;
                 height:50%;
                 width:50%;
+            }
+            .imageFaderCaption{
+                position:absolute;
+                margin:0;
+                padding:5px;
+                bottom:0;
+                color:#fff;
+                z-index:10;
             }
         </style>
 

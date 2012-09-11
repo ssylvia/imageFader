@@ -14,19 +14,20 @@
     var methods = {
 
         init : function(options){
-            return this.each(function(options){
 
-                //Default Options
-                var settings = $.extend({
-                    "startPosition" : 0,
-                    "autoPlay" : true,
-                    "animationSpeed" : 500,
-                    "animationDelay" : 5000,
-                    "captions" : false,
-                    "captionAttr" : "title",
-                    "animationStart" : function(eventObj){},
-                    "animationEnd" : function(eventObjt){}
-                },options);
+            //Default Options
+            var settings = $.extend({
+                "startPosition" : 0,
+                "autoPlay" : true,
+                "animationSpeed" : 500,
+                "animationDelay" : 5000,
+                "captions" : false,
+                "captionAttr" : "alt",
+                "animationStart" : function(eventObj){},
+                "animationEnd" : function(eventObjt){}
+            },options);
+
+            return this.each(function(){
 
                 var data = {
                     "settings" : settings
@@ -149,7 +150,7 @@
             $(this).hide().addClass("imageFaderGalleryImg hiddenImg").removeClass("visibleImg").css("max-height",fader.height()).css("max-width",fader.width());
             $(this).css("position","absolute");
         });
-        
+
         if(fader.children("img").first()[0].complete){
             fader.children("img").first().fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
             repositionImg(fader,fader.children("img").first());
@@ -211,6 +212,10 @@
             "caption" : fader.children("img").eq(data.settings.startPosition).attr(data.settings.captionAttr),
             "jqueryElement" : fader.children("img").eq(data.settings.startPosition)
         };
+
+        if (data.settings.captions === true){
+            fader.append("<div class='imageFaderCaption'>"+data.currentImg.caption+"</div>");
+        }
 
         $(window).bind('resize.imageFader',function(){
             $(".visibleImg").each(function(){
@@ -287,6 +292,9 @@
                 "caption" : fOut.attr(data.settings.captionAttr),
                 "jqueryElement" : fOut
             };
+            if(data.settings.captions === true){
+                $(".imageFaderCaption").html(data.currentImg.caption);
+            }
             data.settings.animationEnd(data);
 
             startSlideShow(fader);
