@@ -45,8 +45,133 @@
                 $(window).unbind(".imageFader");
 
             });
+        },
+        pause : function(){
+            return this.each(function(){
+                pauseAnimation($(this));
+            });
+        },
+        play : function(){
+            return this.each(function(){
+                playAnimation($(this));
+            });
+        },
+        next : function(){
+            return this.each(function(){
+                nextImg($(this));
+            });
+        },
+        prev : function(){
+            return this.each(function(){
+                prevImg($(this));
+            });
+        },
+        goTo : function(pos){
+            return this.each(function(){
+                goToPos($(this),pos);
+            });
+        },
+        update : function(){
+            return this.each(function(){
+                updateFader($(this));
+            });
         }
 
+    };
+
+    var pauseAnimation = function(fader){
+        var data = fader.data("imageFader");
+        data.settings.autoPlay = false;
+        fader.removeClass("slideshowPlaying");
+    };
+
+    var playAnimation = function(fader){
+        var data = fader.data("imageFader");
+        data.settings.autoPlay = true;
+        fader.addClass("slideshowPlaying");
+        startSlideShow(fader);
+    };
+
+    var nextImg = function(fader){
+        pauseAnimation(fader);
+        startSlideShow(fader);
+    };
+
+    var prevImg = function(fader){
+        var data = fader.data("imageFader");
+        pauseAnimation(fader);
+
+        if(data.currentImg.index === 0){
+            if(fader.children("img").last()[0].complete){
+                fadeImages(fader,fader.children("img").last(),data.currentImg.jqueryElement);
+            }
+            else{
+                fader.children("img").last().load(function(){
+                    fadeImages(fader,$(this),data.currentImg.jqueryElement);
+                });
+            }
+        }
+        else{
+            if(data.currentImg.jqueryElement.prev()[0].complete){
+                fadeImages(fader,data.currentImg.jqueryElement.prev(),data.currentImg.jqueryElement);
+            }
+            else{
+                data.currentImg.jqueryElement.prev().load(function(){
+                    fadeImages(fader,$(this),data.currentImg.jqueryElement);
+                });
+            }
+        }
+    };
+
+    var goToPos = function(fader,pos){
+        var data = fader.data("imageFader");
+        pauseAnimation(fader);
+
+        if (pos > fader.children("img").length - 1) {
+            console.log("Error: No image at position " + pos);
+        }
+        else{
+            if(fader.children("img").eq(pos)[0].complete){
+                fadeImages(fader,fader.children("img").eq(pos),data.currentImg.jqueryElement);
+            }
+            else{
+                fader.children("img").eq(pos).load(function(){
+                    fadeImages(fader,$(this),data.currentImg.jqueryElement);
+                });
+            }
+        }
+    };
+
+    var updateFader = function(fader){
+        var data = fader.data("imageFader");
+
+        fader.children("img").each(function(){
+            $(this).hide().addClass("imageFaderGalleryImg hiddenImg").removeClass("visibleImg").css("max-height",fader.height()).css("max-width",fader.width());
+            $(this).css("position","absolute");
+        });
+        
+        if(fader.children("img").first()[0].complete){
+            fader.children("img").first().fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
+            repositionImg(fader,fader.children("img").first());
+            setTimeout(function() {
+                if(data.settings.autoPlay === true){
+                    fader.removeClass("slideshowPlaying");
+                    startSlideShow(fader);
+                }
+            }, data.settings.animationSpeed);
+        }
+        else{
+            fader.children("img").first().load(function(){
+                $(this).fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
+                repositionImg(fader,$(this));
+                setTimeout(function() {
+                    if(data.settings.autoPlay === true){
+                        fader.removeClass("slideshowPlaying");
+                        startSlideShow(fader);
+                    }
+                }, data.settings.animationSpeed);
+            });
+        }
     };
 
     var initializeFader = function(fader){
@@ -63,6 +188,7 @@
             repositionImg(fader,fader.children("img").eq(data.settings.startPosition));
             setTimeout(function() {
                 if(data.settings.autoPlay === true){
+                    fader.removeClass("slideshowPlaying");
                     startSlideShow(fader);
                 }
             }, data.settings.animationSpeed);
@@ -73,6 +199,7 @@
                 repositionImg(fader,$(this));
                 setTimeout(function() {
                     if(data.settings.autoPlay === true){
+                        fader.removeClass("slideshowPlaying");
                         startSlideShow(fader);
                     }
                 }, data.settings.animationSpeed);
@@ -154,6 +281,11 @@
                 "src" : fIn.attr("src"),
                 "caption" : fIn.attr(data.settings.captionAttr),
                 "jqueryElement" : fIn
+            };
+            data.previousImg = {"index" : fOut.index(),
+                "src" : fOut.attr("src"),
+                "caption" : fOut.attr(data.settings.captionAttr),
+                "jqueryElement" : fOut
             };
             data.settings.animationEnd(data);
 
