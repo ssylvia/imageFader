@@ -173,6 +173,12 @@
                 }, data.settings.animationSpeed);
             });
         }
+        
+        data.currentImg = {"index" : 0,
+            "src" : fader.children("img").first().attr("src"),
+            "caption" : fader.children("img").first().attr(data.settings.captionAttr),
+            "jqueryElement" : fader.children("img").first()
+        };
     };
 
     var initializeFader = function(fader){
