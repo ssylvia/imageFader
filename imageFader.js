@@ -30,7 +30,10 @@
             return this.each(function(){
 
                 var data = {
-                    "settings" : settings
+                    "settings" : settings,
+                    "status" : {
+                        "animationReady" : true
+                    }
                 };
 
                 $(this).data("imageFader", data);
@@ -94,8 +97,29 @@
     };
 
     var nextImg = function(fader){
+        var data = fader.data("imageFader");
         pauseAnimation(fader);
-        startSlideShow(fader);
+
+        if(data.currentImg.index === fader.children("img").length - 1){
+            if(fader.children("img").first()[0].complete){
+                fadeImages(fader,fader.children("img").first(),data.currentImg.jqueryElement);
+            }
+            else{
+                fader.children("img").first().load(function(){
+                    fadeImages(fader,$(this),data.currentImg.jqueryElement);
+                });
+            }
+        }
+        else{
+            if(data.currentImg.jqueryElement.next()[0].complete){
+                fadeImages(fader,data.currentImg.jqueryElement.next(),data.currentImg.jqueryElement);
+            }
+            else{
+                data.currentImg.jqueryElement.next().load(function(){
+                    fadeImages(fader,$(this),data.currentImg.jqueryElement);
+                });
+            }
+        }
     };
 
     var prevImg = function(fader){
@@ -173,7 +197,7 @@
                 }, data.settings.animationSpeed);
             });
         }
-        
+
         data.currentImg = {"index" : 0,
             "src" : fader.children("img").first().attr("src"),
             "caption" : fader.children("img").first().attr(data.settings.captionAttr),
@@ -238,39 +262,43 @@
         var data = fader.data("imageFader");
 
         if(data.currentImg.index === fader.children("img").length - 1){
-            if(fader.children("img").first()[0].complete){
-                setTimeout(function() {
-                        if(data.settings.autoPlay === true){
-                            fadeImages(fader,fader.children("img").first(),data.currentImg.jqueryElement);
-                        }
-                    }, data.settings.animationDelay);
-            }
-            else{
-                fader.children("img").first().load(function(){
+            if(fader.children("img").first()[0]){
+                if(fader.children("img").first()[0].complete){
                     setTimeout(function() {
-                        if(data.settings.autoPlay === true){
-                            fadeImages(fader,$(this),data.currentImg.jqueryElement);
-                        }
-                    }, data.settings.animationDelay);
-                });
+                            if(data.settings.autoPlay === true){
+                                fadeImages(fader,fader.children("img").first(),data.currentImg.jqueryElement);
+                            }
+                        }, data.settings.animationDelay);
+                }
+                else{
+                    fader.children("img").first().load(function(){
+                        setTimeout(function() {
+                            if(data.settings.autoPlay === true){
+                                fadeImages(fader,$(this),data.currentImg.jqueryElement);
+                            }
+                        }, data.settings.animationDelay);
+                    });
+                }
             }
         }
         else{
-            if(data.currentImg.jqueryElement.next()[0].complete){
-                setTimeout(function() {
-                        if(data.settings.autoPlay === true){
-                            fadeImages(fader,data.currentImg.jqueryElement.next(),data.currentImg.jqueryElement);
-                        }
-                    }, data.settings.animationDelay);
-            }
-            else{
-                data.currentImg.jqueryElement.next().load(function(){
+            if(data.currentImg.jqueryElement.next()[0]){
+                if(data.currentImg.jqueryElement.next()[0].complete){
                     setTimeout(function() {
-                        if(data.settings.autoPlay === true){
-                            fadeImages(fader,$(this),data.currentImg.jqueryElement);
-                        }
-                    }, data.settings.animationDelay);
-                });
+                            if(data.settings.autoPlay === true){
+                                fadeImages(fader,data.currentImg.jqueryElement.next(),data.currentImg.jqueryElement);
+                            }
+                        }, data.settings.animationDelay);
+                }
+                else{
+                    data.currentImg.jqueryElement.next().load(function(){
+                        setTimeout(function() {
+                            if(data.settings.autoPlay === true){
+                                fadeImages(fader,$(this),data.currentImg.jqueryElement);
+                            }
+                        }, data.settings.animationDelay);
+                    });
+                }
             }
         }
     };
@@ -278,34 +306,48 @@
     var fadeImages = function(fader,fIn,fOut){
         var data = fader.data("imageFader");
 
-        data.settings.animationStart(data);
+        if(data.status.animationReady === true){
 
-        fOut.fadeOut(data.settings.animationSpeed);
-        fIn.fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
-        repositionImg(fader,fIn);
+            data.status.animationReady = false;
+            data.settings.animationStart(data);
 
-        setTimeout(function() {
+            fOut.fadeOut(data.settings.animationSpeed);
+            fIn.fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
             repositionImg(fader,fIn);
-            fOut.removeClass("visibleImg").addClass("hiddenImg");
 
-            data.currentImg = {"index" : fIn.index(),
-                "src" : fIn.attr("src"),
-                "caption" : fIn.attr(data.settings.captionAttr),
-                "jqueryElement" : fIn
-            };
-            data.previousImg = {"index" : fOut.index(),
-                "src" : fOut.attr("src"),
-                "caption" : fOut.attr(data.settings.captionAttr),
-                "jqueryElement" : fOut
-            };
-            if(data.settings.captions === true){
-                $(".imageFaderCaption").html(data.currentImg.caption);
-            }
-            data.settings.animationEnd(data);
+            setTimeout(function() {
+                repositionImg(fader,fIn);
+                fOut.removeClass("visibleImg").addClass("hiddenImg");
 
-            startSlideShow(fader);
+                if(data.settings.autoPlay === true){
+                    setTimeout(function() {
+                        data.status.animationReady = true;
+                    }, data.settings.animationDelay);
+                }
+                else{
+                    data.status.animationReady = true;
+                }
 
-        }, data.settings.animationSpeed);
+                data.currentImg = {"index" : fIn.index(),
+                    "src" : fIn.attr("src"),
+                    "caption" : fIn.attr(data.settings.captionAttr),
+                    "jqueryElement" : fIn
+                };
+                data.previousImg = {"index" : fOut.index(),
+                    "src" : fOut.attr("src"),
+                    "caption" : fOut.attr(data.settings.captionAttr),
+                    "jqueryElement" : fOut
+                };
+                if(data.settings.captions === true){
+                    $(".imageFaderCaption").html(data.currentImg.caption);
+                }
+                data.settings.animationEnd(data);
+
+                startSlideShow(fader);
+
+            }, data.settings.animationSpeed);
+
+        }
     };
 
 })( jQuery );
