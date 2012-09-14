@@ -306,7 +306,7 @@
     var fadeImages = function(fader,fIn,fOut){
         var data = fader.data("imageFader");
 
-        if(data.status.animationReady === true){
+        if(data.status.animationReady === true && fader.children("img").length > 1){
 
             data.status.animationReady = false;
             data.settings.animationStart(data);
