@@ -11,7 +11,10 @@
         $(document).ready(function(){
             $(".fader").imageFader({
                 captions:true,
-                captionAttr:"caption"
+                captionAttr:"caption",
+                animationEnd : function(obj){
+                    console.log(obj);
+                }
             });
         });
         </script>
@@ -38,6 +41,9 @@
 
         <div id='fader' class='fader'>
             <img src="http://farm5.staticflickr.com/4149/4975374268_15df612823_b.jpg" caption="Caption 1" alt="">
+            <img src="http://farm5.staticflickr.com/4085/4974756721_8a24cc8350_b.jpg" caption="Caption 2" alt="">
+            <img src="http://farm5.staticflickr.com/4106/4974759279_e1b475a926_b.jpg" caption="Caption 3" alt="">
+            <img src="http://farm5.staticflickr.com/4107/4974791109_57a51cbeb4_b.jpg" caption="Caption 4" alt="">
         </div>
 
     </body>

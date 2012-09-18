@@ -33,7 +33,8 @@
                     "settings" : settings,
                     "status" : {
                         "animationReady" : true
-                    }
+                    },
+                    "timers" : {}
                 };
 
                 $(this).data("imageFader", data);
@@ -85,6 +86,9 @@
 
     var pauseAnimation = function(fader){
         var data = fader.data("imageFader");
+        for (var timer in data.timers){
+            clearTimeout(timer);
+        }
         data.settings.autoPlay = false;
         fader.removeClass("slideshowPlaying");
     };
@@ -178,7 +182,7 @@
         if(fader.children("img").first()[0].complete){
             fader.children("img").first().fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
             repositionImg(fader,fader.children("img").first());
-            setTimeout(function() {
+            data.timers.updateTimer = setTimeout(function() {
                 if(data.settings.autoPlay === true){
                     fader.removeClass("slideshowPlaying");
                     startSlideShow(fader);
@@ -189,7 +193,7 @@
             fader.children("img").first().load(function(){
                 $(this).fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
                 repositionImg(fader,$(this));
-                setTimeout(function() {
+                data.timers.updateTimer = setTimeout(function() {
                     if(data.settings.autoPlay === true){
                         fader.removeClass("slideshowPlaying");
                         startSlideShow(fader);
@@ -217,7 +221,7 @@
         if(fader.children("img").eq(data.settings.startPosition)[0].complete){
             fader.children("img").eq(data.settings.startPosition).fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
             repositionImg(fader,fader.children("img").eq(data.settings.startPosition));
-            setTimeout(function() {
+            data.timers.initTimer = setTimeout(function() {
                 if(data.settings.autoPlay === true){
                     fader.removeClass("slideshowPlaying");
                     startSlideShow(fader);
@@ -228,7 +232,7 @@
             fader.children("img").eq(data.settings.startPosition).load(function(){
                 $(this).fadeIn(data.settings.animationSpeed).removeClass("hiddenImg").addClass("visibleImg");
                 repositionImg(fader,$(this));
-                setTimeout(function() {
+                data.timers.initTimer = setTimeout(function() {
                     if(data.settings.autoPlay === true){
                         fader.removeClass("slideshowPlaying");
                         startSlideShow(fader);
@@ -264,7 +268,7 @@
         if(data.currentImg.index === fader.children("img").length - 1){
             if(fader.children("img").first()[0]){
                 if(fader.children("img").first()[0].complete){
-                    setTimeout(function() {
+                    data.timers.showTimer = setTimeout(function() {
                             if(data.settings.autoPlay === true){
                                 fadeImages(fader,fader.children("img").first(),data.currentImg.jqueryElement);
                             }
@@ -272,7 +276,7 @@
                 }
                 else{
                     fader.children("img").first().load(function(){
-                        setTimeout(function() {
+                        data.timers.showTimer = setTimeout(function() {
                             if(data.settings.autoPlay === true){
                                 fadeImages(fader,$(this),data.currentImg.jqueryElement);
                             }
@@ -284,7 +288,7 @@
         else{
             if(data.currentImg.jqueryElement.next()[0]){
                 if(data.currentImg.jqueryElement.next()[0].complete){
-                    setTimeout(function() {
+                    data.timers.showTimer = setTimeout(function() {
                             if(data.settings.autoPlay === true){
                                 fadeImages(fader,data.currentImg.jqueryElement.next(),data.currentImg.jqueryElement);
                             }
@@ -292,7 +296,7 @@
                 }
                 else{
                     data.currentImg.jqueryElement.next().load(function(){
-                        setTimeout(function() {
+                        data.timers.showTimer = setTimeout(function() {
                             if(data.settings.autoPlay === true){
                                 fadeImages(fader,$(this),data.currentImg.jqueryElement);
                             }
@@ -320,7 +324,7 @@
                 fOut.removeClass("visibleImg").addClass("hiddenImg");
 
                 if(data.settings.autoPlay === true){
-                    setTimeout(function() {
+                    data.timers.faderTimer = setTimeout(function() {
                         data.status.animationReady = true;
                     }, data.settings.animationDelay);
                 }
