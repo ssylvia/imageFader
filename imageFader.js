@@ -2,8 +2,8 @@
     $.fn.imageFader = function( method ) {
 
         if ( methods[method] ) {
-        	return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-    	} else if ( typeof method === 'object' || ! method ) {
+            return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof method === 'object' || ! method ) {
     		return methods.init.apply( this, arguments );
     	} else {
     		$.error( 'Method ' +  method + ' does not exist in imageFader' );
@@ -16,18 +16,20 @@
         init : function(options){
 
             //Default Options
-            var settings = $.extend({
-                "startPosition" : 0,
-                "autoPlay" : true,
-                "animationSpeed" : 500,
-                "animationDelay" : 5000,
-                "captions" : false,
-                "captionAttr" : "alt",
-                "animationStart" : function(eventObj){},
-                "animationEnd" : function(eventObjt){}
-            },options);
 
-            return this.each(function(){
+            return this.each(function(options){
+
+                //Default Options
+                var settings = $.extend({
+                    "startPosition" : 0,
+                    "autoPlay" : true,
+                    "animationSpeed" : 500,
+                    "animationDelay" : 5000,
+                    "captions" : false,
+                    "captionAttr" : "alt",
+                    "animationStart" : function(eventObj){},
+                    "animationEnd" : function(eventObjt){}
+                },options);
 
                 var data = {
                     "settings" : settings,
