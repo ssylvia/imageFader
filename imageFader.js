@@ -16,20 +16,18 @@
         init : function(options){
 
             //Default Options
+            var settings = $.extend({
+                "startPosition" : 0,
+                "autoPlay" : true,
+                "animationSpeed" : 500,
+                "animationDelay" : 5000,
+                "captions" : false,
+                "captionAttr" : "alt",
+                "animationStart" : function(eventObj){},
+                "animationEnd" : function(eventObjt){}
+            },options);
 
             return this.each(function(options){
-
-                //Default Options
-                var settings = $.extend({
-                    "startPosition" : 0,
-                    "autoPlay" : true,
-                    "animationSpeed" : 500,
-                    "animationDelay" : 5000,
-                    "captions" : false,
-                    "captionAttr" : "alt",
-                    "animationStart" : function(eventObj){},
-                    "animationEnd" : function(eventObjt){}
-                },options);
 
                 var data = {
                     "settings" : settings,
