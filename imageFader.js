@@ -27,7 +27,7 @@
                 "animationEnd" : function(eventObjt){}
             },options);
 
-            return this.each(function(options){
+            return this.each(function(i){
 
                 var data = {
                     "settings" : settings,
@@ -95,7 +95,6 @@
 
     var playAnimation = function(fader){
         var data = fader.data("imageFader");
-        data.settings.autoPlay = true;
         fader.addClass("slideshowPlaying");
         startSlideShow(fader);
     };
@@ -269,7 +268,7 @@
             if(fader.children("img").first()[0]){
                 if(fader.children("img").first()[0].complete){
                     data.timers.showTimer = setTimeout(function() {
-                            if(data.settings.autoPlay === true){
+                            if(fader.hasClass("slideshowPlaying")){
                                 fadeImages(fader,fader.children("img").first(),data.currentImg.jqueryElement);
                             }
                         }, data.settings.animationDelay);
@@ -277,7 +276,7 @@
                 else{
                     fader.children("img").first().load(function(){
                         data.timers.showTimer = setTimeout(function() {
-                            if(data.settings.autoPlay === true){
+                            if(fader.hasClass("slideshowPlaying")){
                                 fadeImages(fader,$(this),data.currentImg.jqueryElement);
                             }
                         }, data.settings.animationDelay);
@@ -289,7 +288,7 @@
             if(data.currentImg.jqueryElement.next()[0]){
                 if(data.currentImg.jqueryElement.next()[0].complete){
                     data.timers.showTimer = setTimeout(function() {
-                            if(data.settings.autoPlay === true){
+                            if(fader.hasClass("slideshowPlaying")){
                                 fadeImages(fader,data.currentImg.jqueryElement.next(),data.currentImg.jqueryElement);
                             }
                         }, data.settings.animationDelay);
@@ -297,7 +296,7 @@
                 else{
                     data.currentImg.jqueryElement.next().load(function(){
                         data.timers.showTimer = setTimeout(function() {
-                            if(data.settings.autoPlay === true){
+                            if(fader.hasClass("slideshowPlaying")){
                                 fadeImages(fader,$(this),data.currentImg.jqueryElement);
                             }
                         }, data.settings.animationDelay);
@@ -323,7 +322,7 @@
                 repositionImg(fader,fIn);
                 fOut.removeClass("visibleImg").addClass("hiddenImg");
 
-                if(data.settings.autoPlay === true){
+                if(fader.hasClass("slideshowPlaying")){
                     data.timers.faderTimer = setTimeout(function() {
                         data.status.animationReady = true;
                     }, data.settings.animationDelay);
